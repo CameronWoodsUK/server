@@ -1,0 +1,7 @@
+body {
+    background-color: #BADA55;
+    /* font-family gives you a list of what fonts to prioritise */
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0px;
+    font-size: 1.5vw;
+}
