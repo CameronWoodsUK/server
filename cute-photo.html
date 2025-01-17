@@ -12,14 +12,37 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
     <link rel="manifest" href="/icons/site.webmanifest">
     <script src="animals.js"></script>
+    <script src="reddit.js"></script>
 
     <title>cute</title>
   </head>
   <body>
-    <h1 id="name"></h1>
-    <div id="image"></div>
-    <input id="newFrogButton" type="button" value="click for a frog" onclick="sendFrog();" />
-    <input id="newCatButton" type="button" value="click for a cat" onclick="sendCat();" />
-    <input id="newDogButton" type="button" value="click for a dog" onclick="sendDog();" />
+    <header>
+      <h2 class="logo"><a href="home.html" style="text-decoration: none; color: inherit;">Cameron's Site</a></h2>
+      <nav>
+        <ul>
+          <li><a href="cute-photo.html" class="navButton">Cute Animals</a></li>
+          <li><a href="about.html" class="navButton">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <div class="split left">
+        <h2 id="randomName"></h2>
+        <div id="randomImage"></div>
+        <input id="randomFrogButton" type ="button" class="button" value="click for random frog" onclick="sendRandFrog();" />
+        <input id="randomCatButton" type ="button" class="button" value="click for random cat" onclick="sendRandCat();" />
+        <input id="randomDogButton" type ="button" class="button" value="click for random dog" onclick="sendRandDog();" />
+      </div>
+  
+      <div class="split right">
+        <h2 id="redditName"></h1>
+        <div id="redditImage"></div>
+        <input id="redditFrogButton" type ="button" class="button" value="click for today's frog" onclick="sendRedditPost('frogs')" />
+        <input id="redditCatButton" type ="button" class="button" value="click for today's cat" onclick="sendRedditPost('cats')"/>
+        <input id="redditDogButton" type ="button" class="button" value="click for today's dog" onclick="sendRedditPost('dogpictures')"/>
+      </div>
+    </main>
+    
   </body>
 </html>

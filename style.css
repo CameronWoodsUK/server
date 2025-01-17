@@ -1,7 +1,110 @@
 body {
     background-color: #BADA55;
-    /* font-family gives you a list of what fonts to prioritise */
     font-family: Helvetica, Arial, sans-serif;
-    margin: 0px;
+    margin: 0;
     font-size: 1.5vw;
+    display: flex;
+    flex-direction: column;
+}
+
+body > header {
+    background-color: #2ea44f;
+    display: flex;
+    height: 60px; /* Define a fixed height for the header */
+    align-items: center;
+    justify-content: flex-start;
+    position: fixed; /* Ensure the header stays at the top */
+    top: 0;
+    width: 100%;
+    z-index: 2; /* Keep it above other elements */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a slight shadow */
+}
+
+main {
+    margin-top: 60px; /* Push the main content below the header */
+    padding: 10px;
+}
+
+.split {
+    height: calc(100% - 60px); /* Subtract the height of the header */
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 60px; /* Align with the bottom of the header */
+    overflow-x: hidden;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.left {
+    left: 0;
+    padding-left: 20px;
+}
+
+.right {
+    right: 0;
+    padding-right: 20px;
+}
+
+.logo {
+    padding-left: 10px;
+    color: whitesmoke;
+    font-family: Rowdies, sans-serif;
+    width: 20%;
+}
+
+body > header > nav > ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+}
+
+.navButton {
+    color: whitesmoke;
+    text-decoration: none;
+    padding: 8px;
+    margin: 16px;
+    border: 1px solid whitesmoke;
+    border-radius: 15%;
+}
+
+.button {
+    appearance: none;
+    background-color: #2ea44f;
+    border: 1px solid rgba(27, 31, 35, .15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+    box-sizing: border-box;
+    color: whitesmoke;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.animalPhoto {
+    max-height: 60h; /* Constrain image height to the .split container */
+    max-width: 40vh;  /* Constrain image width to the .split container */
+    object-fit: contain; /* Ensure the image retains its aspect ratio */
+    display: block; /* Ensure the image behaves like a block-level element */
+    margin: 0 auto; /* Center the image horizontally within the container */
+}
+
+
+
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+    .split {
+        width: 100%; /* Take up the full width on small screens */
+        height: auto; /* Allow height to adjust based on content */
+        top: 60px; /* Keep split below the header */
+        position: relative; /* Change from fixed positioning */
+    }
+
+    .animalPhoto {
+        max-width: 90%; /* Limit width to 90% on small screens */
+        max-height: 70vh; /* Constrain the height to a max of 70% of the viewport height */
+    }
 }
