@@ -1,48 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rowdies:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png">
-    <link rel="manifest" href="/icons/site.webmanifest">
+  <head id="head">
     <script src="animals.js"></script>
     <script src="reddit.js"></script>
-
     <title>cute</title>
   </head>
   <body>
-    <header>
-      <h2 class="logo"><a href="home.html" style="text-decoration: none; color: inherit;">Cameron's Site</a></h2>
-      <nav>
-        <ul>
-          <li><a href="cute-photo.html" class="navButton">Cute Animals</a></li>
-          <li><a href="about.html" class="navButton">About</a></li>
-        </ul>
-      </nav>
-    </header>
+    <header id="header"></header>
+
     <main>
       <div class="split left">
-        <h2 id="randomName"></h2>
+        <h2 id="randomName">Random Animal Photos</h2>
         <div id="randomImage"></div>
-        <input id="randomFrogButton" type ="button" class="button" value="click for random frog" onclick="sendRandFrog();" />
-        <input id="randomCatButton" type ="button" class="button" value="click for random cat" onclick="sendRandCat();" />
-        <input id="randomDogButton" type ="button" class="button" value="click for random dog" onclick="sendRandDog();" />
+        <input id="randomFrogButton" type ="button" class="button" value="random frog" onclick="sendRandFrog();" />
+        <input id="randomCatButton" type ="button" class="button" value="random cat" onclick="sendRandCat();" />
+        <input id="randomDogButton" type ="button" class="button" value="random dog" onclick="sendRandDog();" />
       </div>
   
       <div class="split right">
-        <h2 id="redditName"></h1>
+        <h2 id="redditName" style="margin-bottom: 0;">Animal Photos Popular Right Now</h2>
+        <p style="margin-top: 0;">(may take a sec to load)</p>
         <div id="redditImage"></div>
-        <input id="redditFrogButton" type ="button" class="button" value="click for today's frog" onclick="sendRedditPost('frogs')" />
-        <input id="redditCatButton" type ="button" class="button" value="click for today's cat" onclick="sendRedditPost('cats')"/>
-        <input id="redditDogButton" type ="button" class="button" value="click for today's dog" onclick="sendRedditPost('dogpictures')"/>
+        <input id="redditFrogButton" type ="button" class="button" value="top frog" onclick="sendRedditPost('frogs')" />
+        <input id="redditCatButton" type ="button" class="button" value="top cat" onclick="sendRedditPost('cats')"/>
+        <input id="redditDogButton" type ="button" class="button" value="top dog" onclick="sendRedditPost('dogpictures')"/>
       </div>
     </main>
     
+    <footer id="footer"></footer>
+    <script src="include.js"></script>
   </body>
 </html>

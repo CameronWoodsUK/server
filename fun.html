@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head id="head">
+    <meta name="referrer" content="no-referrer">
+    <title>Home</title>
+  </head>
+  <body>
+    <header id="header"></header>
+
+    <main>
+      <div class="video-container" id="prank">
+        <input type="button" class="button" value="click me!" onclick="prank()">
+
+        <script>
+          function prank() {
+            const vid = document.querySelector("#prank");
+            vid.innerHTML = `<video controls autoplay preload="metadata"><source src="media/RickRoll.mp4" type="video/mp4">Your browser doesnt support the rick roll :(</video>`;
+          }
+        </script>
+      </div>
+      
+    </main>
+
+    <footer id="footer"></footer>
+    <script src="include.js"></script>
+  </body>
+</html>

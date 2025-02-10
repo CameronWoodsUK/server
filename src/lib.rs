@@ -88,22 +88,51 @@ pub mod http {
     use std::{
         env::current_dir, fs, io::{prelude::*, BufReader}, net::TcpStream, path::Path
     };
+    use url::Url;
 
     pub fn handle_connection(mut stream: TcpStream) {
-        let (request_line, _, body) = parse_stream(stream.try_clone().unwrap());
+        let (request_line, headers, body) = parse_stream(stream.try_clone().unwrap());
     
         if request_line.len() == 0 {
             return;
         }
-        println!("{}", request_line);
-    
-        if &request_line[0..3] == "GET" {
+
+        let request_parts = request_line.split_whitespace().collect::<Vec<&str>>();
+        let (method, path) = (request_parts[0], request_parts[1]);
+        println!("{}", path);
+        
+        // added some stuff for a proxy. can use on [MY DOMAIN]/proxy/[WHATEVER AM ACCESSING]
+        if path.contains("/proxy/") {
+            let path = path.split("/proxy/").nth(1).unwrap();
+            let response = handle_proxy_request(&method, &path.replace("/proxy/", ""), &headers, &body);
+
+            if let Err(e) = stream.write_all(response.as_bytes()) {
+                println!("Error writing response: {}", e);
+            }
+            return;
+        }
+
+        // this stuff looks for a certain header from cloudflare bc thats how my https connections work
+        let forwarded_proto = headers.lines().find(|&line| line.starts_with("X-Forwarded-Proto:")).map(|line| line.split(": ").nth(1).unwrap_or("default").trim());
+        println!("{}", forwarded_proto.unwrap_or("idk wtf"));
+        if forwarded_proto == Some("http") {
+            let response = format!("HTTP/1.1 301 Moved Permanently\r\nLocation: https://cameronwoods.lol\r\nContent-Length: 0\r\nConnection: Close\r\n\r\n");
+            println!("Redirected to a secure connection");
+
+            if let Err(e) = stream.write_all(&response.as_bytes()) {
+                println!("Error writing response: {}", e);
+            }
+            return;
+        }
+
+        // normally i just handle GET requests but i've added a proto-functionality for POST
+        if method == "GET" {
             let response = create_response(&request_line);
     
             if let Err(e) = stream.write_all(&response[..]) {
                 println!("Error writing response: {}", e);
             }
-        } else if &request_line[0..4] == "POST" {
+        } else if method == "POST" {
             let response = format!("HTTP/1.1 205 Reset Content\r\nContent-Type: text/html\r\nContent-Length: 0");
             println!("Client wants you to do something with: {}", body);
     
@@ -130,29 +159,16 @@ pub mod http {
                 page[1..].to_string()
             )
         };
-        println!("{filename}: {}\n", Path::new(&filename).exists());
-    
-        enum Contents<String, Vec> {
-            String(String),
-            Image(Vec),
-        }
     
         let (status_line, contents) = if Path::new(&filename).exists() {
-            if filename.contains(".png") || filename.contains(".ico") || filename.contains(".gif"){
-                (
-                    "HTTP/1.1 200 OK".to_string(),
-                    Contents::Image(fs::read(filename).unwrap()),
-                )
-            } else {
-                (
-                    "HTTP/1.1 200 OK".to_string(),
-                    Contents::String(fs::read_to_string(filename).unwrap()),
-                )
-            }
+            (
+                "HTTP/1.1 200 OK".to_string(),
+                fs::read(filename).unwrap()
+            )
         } else {
             (
                 "HTTP/1.1 404 Not Found".to_string(),
-                Contents::String(fs::read_to_string(format!("{}/404.html", root())).unwrap()),
+                fs::read(format!("{}/404.html", root())).unwrap()
             )
         };
     
@@ -163,15 +179,18 @@ pub mod http {
         } else {
             page[1..].to_string()
         };
-    
+        
+        const IMAGE_TYPES: [&str; 4] = [".png", ".ico", ".gif", ".svg"];
         let content_type = if !status_line.contains("OK") || filename.contains(".html") {
             "text/html".to_string()
         } else if filename.contains(".css") {
             "text/css".to_string()
         } else if filename.contains(".js") {
             "application/javascript".to_string()
-        } else if filename.contains(".png") || filename.contains(".ico") || filename.contains(".gif"){
+        } else if IMAGE_TYPES.iter().any(|&t| filename.contains(t)){
             "image".to_string()
+        } else if filename.contains(".mp4") {
+            "video/mp4".to_string()
         } else {
             "text/html".to_string()
         };
@@ -179,22 +198,74 @@ pub mod http {
         let cache_headers = "Cache-Control: no-store, no-cache, must-revalidate, max-age=0\r\nPragma: no-cache\r\nExpires: 0".to_string();
 
         let mut response: Vec<u8>;
-        match contents {
-            Contents::String(contents) => {
-                let length = contents.len();
+        let length = contents.len();
     
-                response = format!("{status_line}\r\nContent-Type: {content_type}\r\nContent-Length: {length}\r\nConnection: keep-alive\r\n{cache_headers}\r\n\r\n{contents}").into_bytes();
-            }
-            Contents::Image(contents) => {
-                let length = contents.len();
-    
-                response = format!("{status_line}\r\nContent-Type: {content_type}\r\nContent-Length: {length}\r\nConnection: keep-alive\r\n{cache_headers}\r\n\r\n").into_bytes();
-                response.extend(contents);
-            }
-        }
+        response = format!("{status_line}\r\nContent-Type: {content_type}\r\nContent-Length: {length}\r\nConnection: keep-alive\r\n{cache_headers}\r\n\r\n").into_bytes();
+        response.extend(contents);
     
         response
     }
+
+    fn handle_proxy_request(method: &str, url_str: &str, headers: &str, body: &str) -> String {
+        // Parse URL
+        println!("{}", url_str);
+        let url = Url::parse(url_str).map_err(|e| format!("URL parse error: {}", e)).unwrap();
+        let domain = url.host_str().ok_or("Failed to extract host from URL").unwrap();
+        let port = url.port_or_known_default().unwrap_or(80);
+
+        // Extract the path 
+        let path = url.path();
+
+        let mut filtered_headers = filter_headers(headers);
+        let content_length = body.len();
+        filtered_headers.push_str(&format!("Content-Length: {}\r\n", content_length));
+        
+        // Create the request
+        let request = format!(
+            "{method} {path} HTTP/1.1\r\nHost: {domain}\r\n{filtered_headers}\r\n{body}",
+        );
+        println!("SENDING:\n{}", request);
+
+        let mut stream = TcpStream::connect(format!("{domain}:{port}"))
+        .map_err(|e| format!("Failed to connect: {}", e)).unwrap();
+
+        stream.write_all(request.as_bytes()).map_err(|e| format!("Write error: {}", e)).unwrap();
+
+        // Read response
+        let mut response = Vec::new();
+        let mut buffer = [0u8; 8192];
+        loop {
+            let bytes_read = stream.read(&mut buffer).unwrap();
+            if bytes_read == 0 { break; }
+                response.extend_from_slice(&buffer[..bytes_read]);
+        }
+        let response_str = String::from_utf8_lossy(&response);
+
+        return response_str.to_string();
+    }
+
+    fn filter_headers(headers: &str) -> String {
+        headers
+            .lines()
+            .filter(|line| {
+                !(line.starts_with("Host:") ||
+                  line.starts_with("Connection:") ||
+                  line.starts_with("Content-Length:") ||
+                  line.starts_with("Cf-") ||  // Remove Cloudflare headers
+                  line.starts_with("X-Forwarded-For:") ||
+                  line.starts_with("Referer:") ||
+                  line.starts_with("Origin:") ||
+                  line.starts_with("Cdn-Loop:") ||
+                  line.starts_with("Cookie:") ||
+                  line.starts_with("Priority:") ||
+                  line.starts_with("Sec-Fetch-") ||
+                  line.starts_with("X-Forwarded-") 
+                )
+            })
+            .map(|line| format!("{}\r\n", line))
+            .collect()
+    }
+    
     
     fn parse_stream(stream: TcpStream) -> (String, String, String) {
         let mut buf_reader = BufReader::new(&stream);
