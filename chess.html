@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head id="head">
+    <title>Froggy Chess</title>
+    <link rel="stylesheet" href="chess-style.css">
+  </head>
+  <body>
+    <header id="header"></header>
+
+    <main>
+    <div style="z-index: 1000; position: fixed;">
+    <div class="controls">
+    	<button onclick="alert('click on the piece you want to move, then click on the square you want to move it to and press the button to move')">help</button>
+    	<button onclick="reset()">reset</button>
+    	<button onclick="saveBoard(board)">save game</button>
+    	<button onclick="loadBoard()">load game</button>
+    </div>
+    <div class="scores">
+    	<p style="font-size: 16px;" id="white-score"></p>
+    	<p style="font-size: 16px;" id="black-score"></p>
+    </div>
+    </div>
+
+    <div class="split left">
+    <div class="board-container">
+        <div class="board-area">
+            <div class="column-labels">
+            <span>a</span><span>b</span><span>c</span><span>d</span><span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
+
+            <div class="row">
+                <div class="row-labels">
+                <span>8</span><span>7</span><span>6</span><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span>
+                </div>
+            <div id="board" class="board"></div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <div class="split right">
+    <p id="turn"></p>
+    <p id="selected-piece"></p>
+    <button type="button" id="move-button"></button>
+    <p id="message"></p>
+    </div>
+    </main>
+
+    <script src="chess.js"></script>
+    <footer id="footer"></footer>
+    <script src="include.js"></script>
+  </body>
+</html>

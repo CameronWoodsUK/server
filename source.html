@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head id="head">
+    <title>Source Code</title>
+  </head>
+  <body>
+    <header id="header"></header>
+
+    <main>
+        <input id="mainButton" type="button" class="button" value="View Main Code" onclick="loadHTML('/src/main.rs', 'rust');">
+        <input id="libButton" type="button" class="button" value="View Custom Library" onclick="loadHTML('/src/lib.rs', 'rust');">
+        <input id="animalButton" type="button" class="button" value="View Random Animal Code" onclick="loadHTML('/animals.js', 'js')">
+        <input id="redditButton" type="button" class="button" value="View Popular Animal Code" onclick="loadHTML('reddit.js', 'js')">
+        <input id="calcButton" type="button" class="button" value="View Calculator Code" onclick="loadHTML('/calculator.js', 'js')">
+        <div id="code"></div>
+    </main>
+
+    <footer id="footer"></footer>
+    <script src="include.js"></script>
+    <script src="source.js"></script>
+  </body>
+</html>

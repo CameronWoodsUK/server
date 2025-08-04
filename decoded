@@ -1,0 +1,5 @@
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.22.1
+Date: Sun, 27 Jul 2025 21:35:58 GMT
+Content-Type: text/html
+Location: /proxy/https://hilite.me/api

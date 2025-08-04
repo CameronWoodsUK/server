@@ -1,0 +1,239 @@
+body {
+    background-color: #BADA55;
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 0;
+    font-size: 1.5vw;
+    display: flex;
+    flex-direction: column;
+}
+
+body > header {
+    background-color: #2ea44f;
+    display: flex;
+    height: 60px; /* Define a fixed height for the header */
+    align-items: center;
+    justify-content: flex-start;
+    position: fixed; /* Ensure the header stays at the top */
+    top: 0;
+    width: 100%;
+    z-index: 2; /* Keep it above other elements */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a slight shadow */
+}
+
+main {
+    margin-top: 60px; /* Push the main content below the header */
+    padding: 10px;
+    margin-bottom: 25vh;
+}
+
+.split {
+    height: 75%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 60px; /* Align with the bottom of the header */
+    overflow-x: hidden;
+    padding-top: 5px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.left {
+    left: 0;
+}
+
+.right {
+    right: 0;
+}
+
+.logo {
+    padding-left: 10px;
+    padding-bottom: 20px;
+    color: whitesmoke;
+    font-family: Rowdies, sans-serif;
+    width: 20%;
+}
+
+body > header > nav > ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+}
+
+.navButton {
+    color: whitesmoke;
+    text-decoration: none;
+    padding: 8px;
+    margin: 16px;
+    border: 1px solid whitesmoke;
+    border-radius: 15%;
+}
+
+.button {
+    appearance: none;
+    background-color: #2ea44f;
+    border: 1px solid rgba(27, 31, 35, .15);
+    border-radius: 6px;
+    box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+    box-sizing: border-box;
+    color: whitesmoke;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.animalPhoto {
+    max-height: 60h; /* Constrain image height to the .split container */
+    max-width: 40vh;  /* Constrain image width to the .split container */
+    object-fit: contain; /* Ensure the image retains its aspect ratio */
+    display: block; /* Ensure the image behaves like a block-level element */
+    margin: 0 auto; /* Center the image horizontally within the container */
+}
+.dogVid {
+    max-height: 60h;
+    max-width: 40vh;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
+
+body > footer {
+    display: flex;
+    background-color: #2ea44f;
+    height: fit-content;
+    flex-shrink: 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    align-items: center;
+    z-index: 2;
+}
+
+footer > nav {
+    width: 100%;
+    display: flex;
+}
+
+#footer-ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+#footer-ul > div > li {
+    margin-left: 12px;
+}
+
+#footer-ul > div > li > a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+#footer-ul > div:last-child {
+    margin-left: auto;
+    margin-right: 12px;
+}
+
+.video-container {
+    width: 100%; /* Make the container take full width of its parent */
+    max-width: 800px; /* Set a reasonable max width for larger screens */
+    margin: 0 auto; /* Center the video on the page */
+    padding: 10px; /* Optional: Add some padding around the video */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+    display: flexbox;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-container video {
+    width: 100%; /* Make the video fill the container */
+    height: auto; /* Maintain aspect ratio */
+    max-height: 70vh; /* Prevent the video from exceeding 70% of the viewport height */
+    display: block; /* Remove any inline spacing */
+}
+
+.contact-icon {
+    width: 25px;
+    height: 25px;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2ea44f;
+    color: whitesmoke;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 20px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+}
+.show-tooltip {
+    opacity: 1;
+}
+
+h1, h2, h3 {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+p {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.loader {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 4px solid whitesmoke;
+    border-right: 4px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+  }
+  .loader::after {
+    content: '';  
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border-left: 4px solid #2ea44f;
+    border-bottom: 4px solid transparent;
+    animation: rotation 0.5s linear infinite reverse;
+  }
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  } 
+
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+    .split {
+        width: 100%; /* Take up the full width on small screens */
+        height: auto; /* Allow height to adjust based on content */
+        top: 60px; /* Keep split below the header */
+        position: relative; /* Change from fixed positioning */
+    }
+
+    .animalPhoto {
+        max-width: 90%; /* Limit width to 90% on small screens */
+        max-height: 70vh; /* Constrain the height to a max of 70% of the viewport height */
+    }
+    body > header > nav > ul {
+	font-size: 8px;
+    }
+}
