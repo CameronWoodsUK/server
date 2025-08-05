@@ -252,6 +252,11 @@ class Board {
             sq1.remove();
          	this.selectedSquare = null;
 
+			// pawn promotion
+			if (sq2.piece.type === 'pawn' && (endRow === 0 || endRow === 7)) {
+				sq2.piece.type = 'queen';
+			}
+
 			// now we go the the next player
             this.turn = this.turn === 'W' ? 'B' : 'W';
 
@@ -373,6 +378,7 @@ class Board {
     			let newSq = new Square(sq.colour, sq.pos);
     			if (sq.piece){
     				newSq.place(new Piece(sq.piece.type, sq.piece.colour));
+    				newSq.piece.hasMoved = sq.piece.hasMoved;
     			}
     			newRow.push(newSq);
     		}
@@ -381,8 +387,33 @@ class Board {
     	
     	const [startRow, startCol] = Board.dec(sq1.pos);
     	const [endRow, endCol] = Board.dec(sq2.pos);
+
+    	if (this.enPassantSq && sq1.piece.type === 'pawn' && endRow === this.enPassantSq.row && endCol === this.enPassantSq.col) {
+    		const dir = Math.sign(endRow-startRow);
+ 		    let takenSq = boardClone[endRow-dir][endCol];
+ 		    takenSq.remove();
+    	}
+    	if (sq1.piece.type === 'king' && Math.abs(endCol-startCol) === 2) {
+  			const rookCol = endCol > startCol ? 7 : 0;
+  			const rookSq = boardClone[startRow][rookCol];
+  			// if king side, else queen side
+  			if (rookCol === 7) {
+  				boardClone[startRow][5].place(rookSq.piece);
+  				rookSq.remove();
+  			} else {
+  				boardClone[startRow][3].place(rookSq.piece);
+  				rookSq.remove();
+  			}
+  		}
+    	
 		boardClone[endRow][endCol].piece = boardClone[startRow][startCol].piece;
 		boardClone[startRow][startCol].remove();
+
+		// pawn promotion
+		let piece = boardClone[endRow][endCol];
+		if (piece.type === 'pawn' && (endRow === 0 || endRow === 7)) {
+			piece.type = 'queen';
+		}
 
     	return boardClone;
     }
@@ -491,13 +522,8 @@ class Piece {
         // diagonal taking
         if (Math.abs(endCol - startCol) === 1 &&
         endRow === startRow + direction &&
-        sq2.piece && sq2.piece.colour !== this.colour) {
+        ((sq2.piece && sq2.piece.colour !== this.colour) || (enPassantSq && endRow === enPassantSq.row && endCol === enPassantSq.col))) {
             return true;
-        }
-
-        //en passant
-        if (enPassantSq && endRow === enPassantSq.row && endCol === enPassantSq.col) {
-        	return true;
         }
 
         return false;
