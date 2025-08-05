@@ -280,12 +280,83 @@ class Board {
 
     botMove() {
     	const colour = this.bot.colour;
-    	const moves = this.getAllMoves(colour);
+    	const possibleMoves = this.getAllMoves(colour);
     	// pick a move at random
-    	const move = moves[Math.floor(Math.random()*moves.length)];
-    	this.move(move[0], move[1]);
-    	this.messageElement.innerHTML = `Bot moved from ${move[0].pos} to ${move[1].pos}`;
-    	
+    	//const move = moves[Math.floor(Math.random()*moves.length)];
+
+		let scoredMoves = [];
+
+		for (const move of possibleMoves) {
+			const score = this.evaluateMaterial(this.simulateMove(move[0], move[1], this.board), colour);
+			scoredMoves.push({from: move[0], to: move[1], score});
+		}
+		scoredMoves.sort((a, b) => b.score - a.score);
+
+		const bestScore = scoredMoves[0].score;
+		let bestMoves = scoredMoves.filter(item => item.score === bestScore);
+		
+    	const move = bestMoves[Math.floor(Math.random()*bestMoves.length)];
+    	this.move(move.from, move.to);
+    	this.messageElement.innerHTML = `Bot moved from ${move.from.pos} to ${move.to.pos}`;
+    }
+
+    // not finished
+    evaluateMove(from, to, board) {
+    	const colour = from.piece.colour;
+    	const enemyColour = colour === 'W' ? 'B' : 'W';
+
+    	const newBoard = this.simulateMove(from, to, board);
+    	const opponentMoves = null;
+    }
+
+    evaluateMaterial(board, colour) {
+    	let score = 0;
+    	for (const row of board) {
+    		for (const sq of row) {
+    			if (sq.piece && sq.piece.colour === colour) {
+    				switch (sq.piece.type) {
+    					case 'pawn':
+    						score++;
+    						break;
+    					case 'bishop':
+    						score += 3;
+    						break;
+    					case 'knight':
+    						score += 3;
+    						break;
+    					case 'rook':
+    						score += 5;
+    						break;
+    					case 'queen':
+    						score += 9;
+    						break;
+    					default:
+    						break;
+    				}
+    			} else if (sq.piece && sq.piece.colour !== colour) {
+    				switch (sq.piece.type) {
+    					case 'pawn':
+    						score--;
+    						break;
+    					case 'bishop':
+    						score -= 3;
+    						break;
+    					case 'knight':
+    						score -= 3;
+    						break;
+    					case 'rook':
+    						score -= 5;
+    						break;
+    					case 'queen':
+    						score -= 9;
+    						break;
+    					default:
+    						break
+    				}
+    			}
+    		}
+    	}
+    	return score;
     }
 
     isLegalMove(sq1, sq2, boardArray, enPassantSq = null) {
